@@ -16,3 +16,8 @@ rtt-target = "0.5"
 [dependencies.cortex-m]
 version = "0.7"
 features = ["critical-section-single-core"]
+
+[profile.release]
+codegen-units = 1
+debug = true
+lto = true

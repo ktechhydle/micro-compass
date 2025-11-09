@@ -58,6 +58,9 @@ fn main() -> ! {
     let board = Board::take().unwrap();
     let mut timer0 = Timer::new(board.TIMER0);
 
+    // small delay to allow warmup
+    timer0.delay_ms(150);
+
     // hardware
     let mut display = Display::new(board.display_pins);
     let mut speaker_pin = board.speaker_pin.into_push_pull_output(gpio::Level::Low);
