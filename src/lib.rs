@@ -77,7 +77,7 @@ pub fn calculate_direction(x: i32, y: i32) -> Direction {
     let mut degrees = theta * (180_f32 / PI);
 
     // normalize angles (0 - 360)
-    degrees = degrees % 360.0;
+    degrees = (degrees + 90.0) % 360.0;
 
     if degrees < 0.0 {
         degrees += 360.0;
@@ -85,23 +85,22 @@ pub fn calculate_direction(x: i32, y: i32) -> Direction {
 
     rprintln!("{}", degrees);
 
-    if (degrees >= 337.5 && degrees <= 360.0) || (degrees >= 0.0 && degrees <= 22.5) {
+    if degrees >= 337.5 || degrees < 22.5 {
         return Direction::North(NORTH);
-    } else if degrees >= 22.5 && degrees <= 67.5 {
+    } else if degrees >= 22.5 && degrees < 67.5 {
         return Direction::NorthEast(NORTH_EAST);
-    } else if degrees >= 292.5 && degrees <= 337.5 {
-        return Direction::NorthWest(NORTH_WEST);
-    } else if degrees >= 157.5 && degrees <= 202.5 {
-        return Direction::South(SOUTH);
-    } else if degrees >= 112.5 && degrees <= 157.5 {
-        return Direction::SouthEast(SOUTH_EAST);
-    } else if degrees >= 202.5 && degrees <= 247.5 {
-        return Direction::SouthWest(SOUTH_WEST);
-    } else if degrees >= 67.5 && degrees <= 112.5 {
+    } else if degrees >= 67.5 && degrees < 112.5 {
         return Direction::East(EAST);
-    } else if degrees >= 247.5 && degrees <= 292.5 {
+    } else if degrees >= 112.5 && degrees < 157.5 {
+        return Direction::SouthEast(SOUTH_EAST);
+    } else if degrees >= 157.5 && degrees < 202.5 {
+        return Direction::South(SOUTH);
+    } else if degrees >= 202.5 && degrees < 247.5 {
+        return Direction::SouthWest(SOUTH_WEST);
+    } else if degrees >= 247.5 && degrees < 292.5 {
         return Direction::West(WEST);
+    } else {
+        // 292.5 - 337.5
+        return Direction::NorthWest(NORTH_WEST);
     }
-
-    Direction::North(NORTH)
 }
