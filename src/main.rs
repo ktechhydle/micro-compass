@@ -7,7 +7,7 @@ use cortex_m_rt::entry;
 use critical_section_lock_mut::LockMut;
 use embedded_hal::{delay::DelayNs, digital::OutputPin};
 use lsm303agr::{Lsm303agr, MagMode, MagOutputDataRate};
-use micro_compass::{EAST, NORTH, SOUTH, WEST};
+use micro_compass::{Direction, calculate_direction};
 use microbit::{
     Board,
     display::blocking::Display,
@@ -114,24 +114,29 @@ fn main() -> ! {
             if sensor.mag_status().unwrap().xyz_new_data() {
                 let (x, y, _) = sensor.magnetic_field().unwrap().xyz_nt();
 
-                if x >= 0 && y <= 0 {
-                    display.show(&mut timer0, NORTH, 100);
+                match calculate_direction(x, y) {
+                    Direction::North(d) => {
+                        display.show(&mut timer0, d, 100);
 
-                    // beep only on north
-                    if BEEP_ENABLED.load(Ordering::Relaxed) {
-                        for _ in 0..CYCLES {
-                            speaker_pin.set_high().unwrap();
-                            timer0.delay_ms(PERIOD / 2);
-                            speaker_pin.set_low().unwrap();
-                            timer0.delay_ms(PERIOD / 2);
+                        // beep only on north (if enabled)
+                        if BEEP_ENABLED.load(Ordering::Relaxed) {
+                            for _ in 0..CYCLES {
+                                speaker_pin.set_high().unwrap();
+                                timer0.delay_ms(PERIOD / 2);
+                                speaker_pin.set_low().unwrap();
+                                timer0.delay_ms(PERIOD / 2);
+                            }
                         }
                     }
-                } else if x >= 0 && y >= 0 {
-                    display.show(&mut timer0, EAST, 100);
-                } else if x <= 0 && y >= 0 {
-                    display.show(&mut timer0, SOUTH, 100);
-                } else if x <= 0 && y <= 0 {
-                    display.show(&mut timer0, WEST, 100);
+                    Direction::NorthEast(d)
+                    | Direction::NorthWest(d)
+                    | Direction::South(d)
+                    | Direction::SouthEast(d)
+                    | Direction::SouthWest(d)
+                    | Direction::East(d)
+                    | Direction::West(d) => {
+                        display.show(&mut timer0, d, 100);
+                    }
                 }
 
                 rprintln!("{}, {}", x, y);
