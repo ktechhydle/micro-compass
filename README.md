@@ -1,6 +1,6 @@
 # micro-compass
 
-This project was created as a follow-up to the [Embedded Rust Discovery Book](https://docs.rust-embedded.org/discovery-mb2/), including a 3D-printable enclosure for the board and battery (that you can modify yourself!), and firmware/control logic
+This project was created as a follow-up to the [Embedded Rust Discovery Book](https://docs.rust-embedded.org/discovery-mb2/), including a 3D-printable enclosure for the board and battery (that you can modify yourself!), and firmware/control logic for the micro:bit v2.
 
 <img src="assets/photo.jpg">
 
